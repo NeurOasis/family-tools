@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captain Zach's Voice Log</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            color: #87ceeb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #87ceeb 0%, #9370db 25%, #ffc0cb 50%, #87ceeb 75%, #9370db 100%);
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #000;
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+        
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            padding: 20px;
+            max-width: 100%;
+        }
+        
+        /* Recording Section */
+        .recording-section {
+            background: #1a1a2e;
+            border: 3px solid #ffc0cb;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .record-button {
+            width: 120px;
+            height: 120px;
+            background: #ff4444;
+            border: 5px solid #ff6666;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        
+        .record-button.recording {
+            background: #ff6666;
+            animation: pulse 1.5s infinite;
+            border-color: #ff8888;
+        }
+        
+        .record-button.playing {
+            background: #87ceeb;
+            border-color: #a0d8ef;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .status-text {
+            font-size: 1.2rem;
+            margin: 15px 0;
+            color: #ffc0cb;
+            font-weight: 700;
+        }
+        
+        /* Prompt Cards */
+        .prompts-section {
+            background: #1a1a2e;
+            border: 3px solid #87ceeb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            color: #ffc0cb;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .prompt-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .prompt-card {
+            background: #2a2a3e;
+            border: 2px solid #9370db;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .prompt-card:active {
+            transform: scale(0.98);
+            background: #3a3a4e;
+        }
+        
+        .prompt-card.selected {
+            border-color: #ffc0cb;
+            background: #3a3a4e;
+        }
+        
+        .prompt-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .prompt-text {
+            color: #87ceeb;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        /* Voice Analysis */
+        .analysis-section {
+            background: #1a1a2e;
+            border: 3px solid #9370db;
+            border-radius: 15px;
+            padding: 20px;
+            display: none;
+        }
+        
+        .voice-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-card {
+            background: #2a2a3e;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .metric-label {
+            color: #9370db;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            color: #ffc0cb;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .waveform {
+            background: #2a2a3e;
+            border-radius: 10px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .wave-bar {
+            width: 3px;
+            background: #87ceeb;
+            margin: 0 2px;
+            animation: wave 1s infinite ease-in-out;
+        }
+        
+        @keyframes wave {
+            0%, 100% { height: 20px; }
+            50% { height: 60px; }
+        }
+        
+        /* Transcript Section */
+        .transcript-section {
+            background: #2a2a3e;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .transcript-text {
+            color: #87ceeb;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: #6a5acd;
+            color: #fff;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-send {
+            background: #87ceeb;
+            color: #000;
+        }
+        
+        .btn-redo {
+            background: #ffc0cb;
+            color: #000;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1a1a2e;
+            border-top: 3px solid #9370db;
+            padding: 15px;
+            text-align: center;
+            color: #87ceeb;
+        }
+        
+        /* Hidden audio element */
+        audio {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🎙️ CAPTAIN ZACH'S VOICE LOG 🎙️</h1>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Recording Section -->
+        <div class="recording-section">
+            <h2 class="section-title">TAP TO RECORD YOUR THOUGHTS</h2>
+            
+            <div class="record-button" id="recordButton" onclick="toggleRecording()">
+                <span id="buttonIcon">🎤</span>
+            </div>
+            
+            <p class="status-text" id="statusText">Ready to record!</p>
+            
+            <audio id="audioPlayer" controls style="display: none;"></audio>
+        </div>
+        
+        <!-- Prompt Cards -->
+        <div class="prompts-section">
+            <h2 class="section-title">💭 WHAT DO YOU WANT TO TELL US?</h2>
+            
+            <div class="prompt-cards">
+                <div class="prompt-card" onclick="selectPrompt(this, 'feedback')">
+                    <div class="prompt-icon">💡</div>
+                    <div class="prompt-text">Ideas for the puzzle solver</div>
+                </div>
+                
+                <div class="prompt-card" onclick="selectPrompt(this, 'discovery')">
+                    <div class="prompt-icon">🔍</div>
+                    <div class="prompt-text">What I discovered about NINYE</div>
+                </div>
+                
+                <div class="prompt-card" onclick="selectPrompt(this, 'feeling')">
+                    <div class="prompt-icon">😊</div>
+                    <div class="prompt-text">How I'm feeling about the puzzle</div>
+                </div>
+                
+                <div class="prompt-card" onclick="selectPrompt(this, 'help')">
+                    <div class="prompt-icon">🤔</div>
+                    <div class="prompt-text">Something confusing or broken</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Analysis Section -->
+        <div class="analysis-section" id="analysisSection">
+            <h2 class="section-title">🎵 YOUR VOICE PATTERN</h2>
+            
+            <!-- Voice Metrics -->
+            <div class="voice-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">ENERGY LEVEL</div>
+                    <div class="metric-value" id="energyLevel">⚡⚡⚡</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">MOOD</div>
+                    <div class="metric-value" id="moodEmoji">😊</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">SPEED</div>
+                    <div class="metric-value" id="speechSpeed">Normal</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">CLARITY</div>
+                    <div class="metric-value" id="clarity">Clear</div>
+                </div>
+            </div>
+            
+            <!-- Waveform Visualization -->
+            <div class="waveform" id="waveform">
+                <div class="wave-bar" style="animation-delay: 0s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.1s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.2s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.3s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.4s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.5s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.6s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.7s;"></div>
+            </div>
+            
+            <!-- Transcript -->
+            <div class="transcript-section">
+                <h3 style="color: #ffc0cb; margin-bottom: 10px;">What you said:</h3>
+                <p class="transcript-text" id="transcriptText">Processing your voice...</p>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-send" onclick="sendFeedback()">
+                    📤 SEND TO DAD
+                </button>
+                <button class="btn btn-redo" onclick="startNewRecording()">
+                    🔄 RECORD AGAIN
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        YOUR VOICE HELPS MAKE THE TOOLS BETTER!
+    </div>
+    
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let selectedPrompt = null;
+        let recordingStartTime;
+        let audioBlob;
+        let voiceData = {};
+        
+        // Check for browser support
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('Voice recording is not supported on this device.');
+        }
+        
+        async function toggleRecording() {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        }
+        
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    
+                    // Show audio player
+                    const player = document.getElementById('audioPlayer');
+                    player.src = audioUrl;
+                    player.style.display = 'block';
+                    
+                    // Analyze the recording
+                    analyzeRecording();
+                };
+                
+                mediaRecorder.start();
+                recordingStartTime = Date.now();
+                isRecording = true;
+                
+                // Update UI
+                const button = document.getElementById('recordButton');
+                button.classList.add('recording');
+                document.getElementById('buttonIcon').textContent = '⏹️';
+                document.getElementById('statusText').textContent = 'Recording... Tap to stop!';
+                
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                alert('Please allow microphone access to record your voice.');
+            }
+        }
+        
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                isRecording = false;
+                
+                // Update UI
+                const button = document.getElementById('recordButton');
+                button.classList.remove('recording');
+                document.getElementById('buttonIcon').textContent = '🎤';
+                document.getElementById('statusText').textContent = 'Recording saved!';
+            }
+        }
+        
+        function selectPrompt(card, type) {
+            // Remove previous selection
+            document.querySelectorAll('.prompt-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            // Add selection
+            card.classList.add('selected');
+            selectedPrompt = type;
+        }
+        
+        function analyzeRecording() {
+            // Show analysis section
+            document.getElementById('analysisSection').style.display = 'block';
+            
+            // Calculate recording duration
+            const duration = (Date.now() - recordingStartTime) / 1000;
+            
+            // Simulate voice analysis (in real implementation, this would use Web Audio API)
+            const energy = duration < 5 ? '⚡⚡' : duration < 15 ? '⚡⚡⚡' : '⚡⚡⚡⚡';
+            const mood = selectedPrompt === 'help' ? '🤔' : selectedPrompt === 'discovery' ? '🤩' : '😊';
+            const speed = duration < 10 ? 'Fast' : duration < 20 ? 'Normal' : 'Slow';
+            const clarity = 'Clear'; // Would analyze audio quality
+            
+            // Update metrics
+            document.getElementById('energyLevel').textContent = energy;
+            document.getElementById('moodEmoji').textContent = mood;
+            document.getElementById('speechSpeed').textContent = speed;
+            document.getElementById('clarity').textContent = clarity;
+            
+            // Store voice data
+            voiceData = {
+                timestamp: new Date().toISOString(),
+                duration: duration,
+                promptType: selectedPrompt || 'general',
+                metrics: {
+                    energy: energy.length,
+                    mood: mood,
+                    speed: speed,
+                    clarity: clarity
+                }
+            };
+            
+            // Simulate transcription
+            setTimeout(() => {
+                const sampleTranscripts = {
+                    feedback: "I think it would be cool if the buttons were bigger and if there were more sound effects when I find a word!",
+                    discovery: "I noticed NINYE always pauses before saying important words. Maybe the password is hidden in the pauses?",
+                    feeling: "This is really fun! I feel like a detective. The colors are awesome and I like trying different words.",
+                    help: "The paste button is hard to press. Sometimes it doesn't work and I have to press really hard.",
+                    general: "Testing, testing... This is Captain Zach reporting from the puzzle lab!"
+                };
+                
+                document.getElementById('transcriptText').textContent = 
+                    sampleTranscripts[selectedPrompt || 'general'];
+            }, 2000);
+        }
+        
+        async function sendFeedback() {
+            // Prepare data package
+            const feedbackData = {
+                ...voiceData,
+                transcript: document.getElementById('transcriptText').textContent,
+                audioSize: audioBlob.size,
+                deviceInfo: {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    language: navigator.language
+                }
+            };
+            
+            // In real implementation, this would upload to a server
+            console.log('Feedback data:', feedbackData);
+            
+            // Show success message
+            alert('Voice message sent to Dad! He'll listen to it soon! 🎉');
+            
+            // Store locally for pattern analysis
+            const allFeedback = JSON.parse(localStorage.getItem('zachVoiceFeedback') || '[]');
+            allFeedback.push(feedbackData);
+            localStorage.setItem('zachVoiceFeedback', JSON.stringify(allFeedback));
+            
+            // Reset for next recording
+            startNewRecording();
+        }
+        
+        function startNewRecording() {
+            // Reset UI
+            document.getElementById('analysisSection').style.display = 'none';
+            document.getElementById('audioPlayer').style.display = 'none';
+            document.getElementById('statusText').textContent = 'Ready to record!';
+            
+            // Clear selections
+            document.querySelectorAll('.prompt-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            selectedPrompt = null;
+            
+            // Clear data
+            audioChunks = [];
+            audioBlob = null;
+            voiceData = {};
+        }
+        
+        // Add visual feedback for waveform during recording
+        setInterval(() => {
+            if (isRecording) {
+                const bars = document.querySelectorAll('.wave-bar');
+                bars.forEach(bar => {
+                    const height = Math.random() * 60 + 20;
+                    bar.style.height = height + 'px';
+                });
+            }
+        }, 100);
+    </script>
+</body>
+</html>

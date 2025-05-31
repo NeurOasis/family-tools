@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captain Zach's NINYE Mission</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            color: #87ceeb;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #87ceeb 0%, #9370db 25%, #ffc0cb 50%, #87ceeb 75%, #9370db 100%);
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            color: #000;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 100%;
+        }
+        
+        /* Mission Status */
+        .mission-status {
+            background: #1a1a2e;
+            border: 3px solid #87ceeb;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .mission-status h2 {
+            color: #ffc0cb;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .status-message {
+            color: #87ceeb;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        /* Words Section */
+        .words-section {
+            background: #1a1a2e;
+            border: 3px solid #9370db;
+            border-radius: 15px;
+            padding: 20px;
+        }
+        
+        .section-title {
+            color: #ffc0cb;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .current-word {
+            background: #2a2a3e;
+            border: 3px solid #87ceeb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .word-display {
+            font-size: 2rem;
+            color: #ffb6c1;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+        
+        .word-hint {
+            color: #87ceeb;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: #6a5acd;
+            color: #fff;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+            background: #9370db;
+        }
+        
+        .btn-copy {
+            background: #87ceeb;
+            color: #000;
+        }
+        
+        .btn-next {
+            background: #ffc0cb;
+            color: #000;
+        }
+        
+        /* Progress */
+        .progress-bar {
+            background: #2a2a3e;
+            border-radius: 20px;
+            height: 30px;
+            margin-top: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #87ceeb, #9370db, #ffc0cb);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: 700;
+        }
+        
+        /* Instructions */
+        .instructions {
+            background: #2a2a3e;
+            border: 2px solid #87ceeb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .instructions h3 {
+            color: #ffc0cb;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            color: #87ceeb;
+            line-height: 1.8;
+        }
+        
+        /* Celebration */
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            border: 5px solid #ffc0cb;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .celebration h2 {
+            color: #ffc0cb;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .celebration p {
+            color: #87ceeb;
+            font-size: 1.2rem;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1a1a2e;
+            border-top: 3px solid #9370db;
+            padding: 15px;
+            text-align: center;
+            color: #87ceeb;
+        }
+        
+        /* Copied state */
+        .copied {
+            background: #4CAF50 !important;
+            color: #fff !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>CAPTAIN ZACH'S NINYE MISSION</h1>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Mission Status -->
+        <div class="mission-status">
+            <h2>🚀 MISSION STATUS 🚀</h2>
+            <p class="status-message">
+                You're trying words that NO ONE out of 2 million people has tried!<br>
+                You could be the FIRST to solve NINYE's puzzle!
+            </p>
+        </div>
+        
+        <!-- Words Section -->
+        <div class="words-section">
+            <h2 class="section-title">🎯 CURRENT WORD TO TRY 🎯</h2>
+            
+            <div class="current-word">
+                <div class="word-display" id="currentWord">FINITE</div>
+                <div class="word-hint" id="wordHint">NINYE said: "Finite is time/resources"</div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-copy" id="copyBtn" onclick="copyWord()">
+                        📋 COPY WORD
+                    </button>
+                    <a href="https://www.youtube.com/watch?v=UFLG-sI3MgU" class="btn" target="_blank">
+                        ▶️ GO TO NINYE
+                    </a>
+                    <button class="btn btn-next" onclick="nextWord()">
+                        ➡️ NEXT WORD
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Progress -->
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress" style="width: 10%">
+                    <span id="progressText">1 of 10</span>
+                </div>
+            </div>
+            
+            <!-- Simple Instructions -->
+            <div class="instructions">
+                <h3>📝 HOW TO PLAY:</h3>
+                <ol>
+                    <li>Tap "COPY WORD" (it saves the word)</li>
+                    <li>Tap "GO TO NINYE" (opens YouTube)</li>
+                    <li>Long press in the comment box</li>
+                    <li>Tap "Paste" when it appears</li>
+                    <li>Submit your guess!</li>
+                    <li>Come back and tap "NEXT WORD"</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Celebration Popup -->
+    <div class="celebration" id="celebration">
+        <h2>🎉 AWESOME! 🎉</h2>
+        <p>Word copied! Now go paste it on NINYE!</p>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        NO TIME LIMITS • EXPLORE AT YOUR PACE • YOU'VE GOT THIS!
+    </div>
+    
+    <script>
+        // NINYE's words with hints
+        const words = [
+            { word: "FINITE", hint: 'NINYE said: "Finite is time/resources"' },
+            { word: "FACADE", hint: 'NINYE said: "Facade is fake/illusion"' },
+            { word: "FERVOR", hint: 'NINYE said: "Fervor is passion"' },
+            { word: "FRENZY", hint: 'NINYE said: "The frenzy continues"' },
+            { word: "FRACTAL", hint: 'NINYE said: "Fractal patterns everywhere"' },
+            { word: "FULCRUM", hint: 'NINYE uses this word about balance' },
+            { word: "FUSION", hint: 'NINYE talks about merging ideas' },
+            { word: "FATHOM", hint: 'NINYE says "Can you fathom?"' },
+            { word: "FORTIFY", hint: 'NINYE mentions strengthening' },
+            { word: "FLOURISH", hint: 'NINYE talks about growth' }
+        ];
+        
+        let currentIndex = 0;
+        
+        // Load saved progress
+        const saved = localStorage.getItem('zachProgress');
+        if (saved) {
+            currentIndex = parseInt(saved) || 0;
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const word = words[currentIndex];
+            document.getElementById('currentWord').textContent = word.word;
+            document.getElementById('wordHint').textContent = word.hint;
+            
+            const progress = ((currentIndex + 1) / words.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${currentIndex + 1} of ${words.length}`;
+        }
+        
+        async function copyWord() {
+            const word = words[currentIndex].word;
+            const btn = document.getElementById('copyBtn');
+            
+            try {
+                await navigator.clipboard.writeText(word);
+                
+                // Show success
+                btn.classList.add('copied');
+                btn.textContent = '✅ COPIED!';
+                
+                // Show celebration
+                const celebration = document.getElementById('celebration');
+                celebration.style.display = 'block';
+                
+                setTimeout(() => {
+                    celebration.style.display = 'none';
+                    btn.classList.remove('copied');
+                    btn.textContent = '📋 COPY WORD';
+                }, 2000);
+                
+            } catch (err) {
+                // Fallback for older browsers
+                alert('Word to copy: ' + word);
+            }
+        }
+        
+        function nextWord() {
+            if (currentIndex < words.length - 1) {
+                currentIndex++;
+                localStorage.setItem('zachProgress', currentIndex);
+                updateDisplay();
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            } else {
+                // Completed all 10 words!
+                showCompletionScreen();
+            }
+        }
+        
+        function showCompletionScreen() {
+            document.querySelector('.main-content').innerHTML = `
+                <div class="mission-status" style="border-color: #ffc0cb;">
+                    <h2 style="font-size: 2rem; color: #ffc0cb;">🎊 MISSION COMPLETE! 🎊</h2>
+                    <p class="status-message" style="font-size: 1.2rem; margin: 20px 0;">
+                        Captain Zach, you've tested ALL 10 secret words!<br>
+                        You're the FIRST person in the world to try these!
+                    </p>
+                </div>
+                
+                <div class="words-section" style="text-align: center;">
+                    <h2 style="color: #87ceeb; margin-bottom: 20px;">🔍 WHAT'S NEXT? 🔍</h2>
+                    
+                    <div class="action-buttons" style="justify-content: center; margin-bottom: 30px;">
+                        <button class="btn" style="background: #87ceeb; color: #000; font-size: 1.2rem; padding: 20px 30px;" onclick="startAnalyzer()">
+                            🎥 ANALYZE NINYE VIDEOS
+                        </button>
+                    </div>
+                    
+                    <div style="background: #2a2a3e; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                        <h3 style="color: #ffc0cb; margin-bottom: 10px;">💡 OR TRY THESE:</h3>
+                        <button class="btn btn-next" onclick="resetAndRestart()" style="margin: 10px;">
+                            🔄 Test Words Again
+                        </button>
+                        <button class="btn" onclick="showYourWords()" style="margin: 10px; background: #9370db;">
+                            ✏️ Try Your Own Words
+                        </button>
+                    </div>
+                    
+                    <div style="color: #87ceeb; font-style: italic; margin-top: 20px;">
+                        <p>💭 Think NINYE left more clues in his videos?</p>
+                        <p>🎯 The video analyzer will help you find them!</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function resetAndRestart() {
+            currentIndex = 0;
+            localStorage.setItem('zachProgress', 0);
+            location.reload();
+        }
+        
+        function startAnalyzer() {
+            alert("Video Analyzer coming soon! Check back tomorrow!");
+            // This will link to the new analyzer tool
+        }
+        
+        function showYourWords() {
+            const userWord = prompt("What F-word do you want to try?");
+            if (userWord && userWord.toUpperCase().startsWith('F')) {
+                navigator.clipboard.writeText(userWord.toUpperCase());
+                alert("Copied: " + userWord.toUpperCase() + "! Go paste it on NINYE!");
+            }
+        }
+    </script>
+</body>
+</html>

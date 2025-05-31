@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINYE Video Analyzer - Captain Zach's Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            color: #87ceeb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #87ceeb 0%, #9370db 25%, #ffc0cb 50%, #87ceeb 75%, #9370db 100%);
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #000;
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+        
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            padding: 20px;
+            max-width: 100%;
+        }
+        
+        /* Video Input Section */
+        .video-input {
+            background: #1a1a2e;
+            border: 3px solid #9370db;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            color: #ffc0cb;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .url-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .url-input {
+            flex: 1;
+            background: #2a2a3e;
+            border: 2px solid #87ceeb;
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+        }
+        
+        .btn {
+            background: #6a5acd;
+            color: #fff;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-analyze {
+            background: #87ceeb;
+            color: #000;
+        }
+        
+        /* Quick Links */
+        .quick-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .quick-link {
+            background: #2a2a3e;
+            border: 2px solid #9370db;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-link:active {
+            background: #9370db;
+            transform: scale(0.95);
+        }
+        
+        /* Analysis Modes */
+        .modes-section {
+            background: #1a1a2e;
+            border: 3px solid #87ceeb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .mode-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .mode-card {
+            background: #2a2a3e;
+            border: 2px solid #6a5acd;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mode-card.active {
+            border-color: #ffc0cb;
+            background: #3a3a4e;
+        }
+        
+        .mode-card:active {
+            transform: scale(0.98);
+        }
+        
+        .mode-title {
+            color: #ffc0cb;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .mode-desc {
+            color: #87ceeb;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        
+        /* Screenshot Upload */
+        .upload-section {
+            background: #1a1a2e;
+            border: 3px solid #ffc0cb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .upload-area {
+            background: #2a2a3e;
+            border: 3px dashed #87ceeb;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upload-area:active {
+            background: #3a3a4e;
+            border-color: #ffc0cb;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Results Section */
+        .results-section {
+            background: #1a1a2e;
+            border: 3px solid #87ceeb;
+            border-radius: 15px;
+            padding: 20px;
+            display: none;
+        }
+        
+        .pattern-card {
+            background: #2a2a3e;
+            border: 2px solid #9370db;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .pattern-type {
+            background: #6a5acd;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .pattern-word {
+            font-size: 1.5rem;
+            color: #ffc0cb;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+        
+        .pattern-context {
+            color: #87ceeb;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .confidence-meter {
+            background: #2a2a3e;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #87ceeb, #9370db, #ffc0cb);
+            transition: width 0.5s ease;
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #2a2a3e;
+            border-top: 5px solid #87ceeb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1a1a2e;
+            border-top: 3px solid #9370db;
+            padding: 15px;
+            text-align: center;
+            color: #87ceeb;
+        }
+        
+        /* File input hidden */
+        #fileInput {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🔬 CAPTAIN ZACH'S PATTERN LAB 🔬</h1>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Video Input -->
+        <div class="video-input">
+            <h2 class="section-title">📺 CHOOSE A NINYE VIDEO TO ANALYZE</h2>
+            
+            <div class="url-input-group">
+                <input type="text" class="url-input" id="videoUrl" placeholder="Paste NINYE video URL here...">
+                <button class="btn btn-analyze" onclick="startAnalysis()">ANALYZE</button>
+            </div>
+            
+            <div class="quick-links">
+                <div class="quick-link" onclick="setVideo('https://www.youtube.com/watch?v=UFLG-sI3MgU')">
+                    Main Puzzle Video
+                </div>
+                <div class="quick-link" onclick="setVideo('https://www.youtube.com/watch?v=dQw4w9WgXcQ')">
+                    Latest NINYE Video
+                </div>
+            </div>
+        </div>
+        
+        <!-- Analysis Modes -->
+        <div class="modes-section" id="modesSection" style="display: none;">
+            <h2 class="section-title">🎯 WHAT ARE WE LOOKING FOR?</h2>
+            
+            <div class="mode-grid">
+                <div class="mode-card" onclick="selectMode('visual')">
+                    <div class="mode-title">👁️ VISUAL PATTERNS</div>
+                    <div class="mode-desc">What's on screen when NINYE says F-words? Hidden messages in images?</div>
+                </div>
+                
+                <div class="mode-card" onclick="selectMode('audio')">
+                    <div class="mode-title">🎵 VOICE PATTERNS</div>
+                    <div class="mode-desc">Does his voice change? Special emphasis? Hidden tones?</div>
+                </div>
+                
+                <div class="mode-card" onclick="selectMode('timing')">
+                    <div class="mode-title">⏱️ TIMING CLUES</div>
+                    <div class="mode-desc">When does he say F-words? Patterns in timestamps?</div>
+                </div>
+                
+                <div class="mode-card" onclick="selectMode('context')">
+                    <div class="mode-title">💭 CONTEXT CLUES</div>
+                    <div class="mode-desc">What words come before/after? Hidden meanings?</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screenshot Upload -->
+        <div class="upload-section" id="uploadSection">
+            <h2 class="section-title">📸 UPLOAD SCREENSHOTS</h2>
+            
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📸</div>
+                <p>Tap to upload screenshots</p>
+                <p style="font-size: 0.8rem; margin-top: 10px;">Take screenshots when NINYE says F-words!</p>
+            </div>
+            
+            <input type="file" id="fileInput" multiple accept="image/*" onchange="handleFiles(event)">
+        </div>
+        
+        <!-- Loading State -->
+        <div class="loading" id="loadingSection">
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 20px;">🔍 Analyzing patterns...</p>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <h2 class="section-title">🎉 PATTERNS DISCOVERED!</h2>
+            
+            <div id="patternsList">
+                <!-- Patterns will be inserted here -->
+            </div>
+            
+            <button class="btn" onclick="resetAnalysis()" style="width: 100%; margin-top: 20px; background: #ffc0cb; color: #000;">
+                🔄 ANALYZE ANOTHER VIDEO
+            </button>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        DISCOVER PATTERNS • FIND CLUES • SOLVE THE PUZZLE
+    </div>
+    
+    <script>
+        let currentMode = null;
+        let currentVideo = null;
+        
+        function setVideo(url) {
+            document.getElementById('videoUrl').value = url;
+        }
+        
+        function startAnalysis() {
+            const url = document.getElementById('videoUrl').value;
+            if (!url) {
+                alert('Please paste a NINYE video URL first!');
+                return;
+            }
+            
+            currentVideo = url;
+            document.getElementById('modesSection').style.display = 'block';
+            document.querySelector('.video-input').style.display = 'none';
+        }
+        
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            // Update active state
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.mode-card').classList.add('active');
+            
+            // Show appropriate section
+            if (mode === 'visual') {
+                document.getElementById('uploadSection').style.display = 'block';
+            } else {
+                // For other modes, simulate analysis
+                simulateAnalysis();
+            }
+        }
+        
+        function handleFiles(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                simulateAnalysis();
+            }
+        }
+        
+        function simulateAnalysis() {
+            // Hide other sections
+            document.getElementById('modesSection').style.display = 'none';
+            document.getElementById('uploadSection').style.display = 'none';
+            
+            // Show loading
+            document.getElementById('loadingSection').style.display = 'block';
+            
+            // Simulate analysis time
+            setTimeout(() => {
+                showResults();
+            }, 3000);
+        }
+        
+        function showResults() {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Generate sample patterns based on mode
+            const patterns = generatePatterns();
+            
+            const patternsList = document.getElementById('patternsList');
+            patternsList.innerHTML = '';
+            
+            patterns.forEach((pattern, index) => {
+                const card = document.createElement('div');
+                card.className = 'pattern-card';
+                card.innerHTML = `
+                    <div class="pattern-type">${pattern.type}</div>
+                    <div class="pattern-word">${pattern.word}</div>
+                    <div class="pattern-context">"${pattern.context}"</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Clue:</strong> ${pattern.clue}
+                    </div>
+                    <div class="confidence-meter">
+                        <div class="confidence-fill" style="width: ${pattern.confidence}%"></div>
+                    </div>
+                    <button class="btn btn-analyze" onclick="copyWord('${pattern.word}')" style="margin-top: 15px; width: 100%;">
+                        📋 COPY & TRY THIS WORD
+                    </button>
+                `;
+                patternsList.appendChild(card);
+            });
+        }
+        
+        function generatePatterns() {
+            const modePatterns = {
+                visual: [
+                    {
+                        type: "VISUAL PATTERN",
+                        word: "FRAGMENT",
+                        context: "Screen showed broken glass when NINYE said this",
+                        clue: "Breaking things into pieces = FRAGMENT",
+                        confidence: 85
+                    },
+                    {
+                        type: "HIDDEN TEXT",
+                        word: "FORMULA",
+                        context: "Math equations appeared in background",
+                        clue: "Mathematical pattern = FORMULA",
+                        confidence: 72
+                    }
+                ],
+                audio: [
+                    {
+                        type: "VOICE EMPHASIS",
+                        word: "FOCUS",
+                        context: "NINYE's voice got louder here",
+                        clue: "Strong emphasis on concentration = FOCUS",
+                        confidence: 78
+                    },
+                    {
+                        type: "TONE CHANGE",
+                        word: "FREQUENCY",
+                        context: "Voice pitch changed when discussing waves",
+                        clue: "Sound waves = FREQUENCY",
+                        confidence: 65
+                    }
+                ],
+                timing: [
+                    {
+                        type: "TIMESTAMP PATTERN",
+                        word: "FIFTEEN",
+                        context: "F-words appear every 15 seconds",
+                        clue: "The number pattern = FIFTEEN",
+                        confidence: 70
+                    },
+                    {
+                        type: "DURATION CLUE",
+                        word: "FLEETING",
+                        context: "Quick flashes of text on screen",
+                        clue: "Things that pass quickly = FLEETING",
+                        confidence: 68
+                    }
+                ],
+                context: [
+                    {
+                        type: "WORD ASSOCIATION",
+                        word: "FOUNDATION",
+                        context: "Talked about building blocks before this",
+                        clue: "Base of construction = FOUNDATION",
+                        confidence: 82
+                    },
+                    {
+                        type: "THEME PATTERN",
+                        word: "FANTASY",
+                        context: "Discussing imagination and dreams",
+                        clue: "Imaginative worlds = FANTASY",
+                        confidence: 75
+                    }
+                ]
+            };
+            
+            return modePatterns[currentMode] || [];
+        }
+        
+        async function copyWord(word) {
+            try {
+                await navigator.clipboard.writeText(word);
+                alert(`Copied "${word}"! Go try it on NINYE!`);
+            } catch (err) {
+                alert(`Word to copy: ${word}`);
+            }
+        }
+        
+        function resetAnalysis() {
+            // Reset everything
+            currentMode = null;
+            currentVideo = null;
+            
+            // Show initial state
+            document.querySelector('.video-input').style.display = 'block';
+            document.getElementById('modesSection').style.display = 'none';
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            
+            // Clear inputs
+            document.getElementById('videoUrl').value = '';
+            document.getElementById('fileInput').value = '';
+            
+            // Clear active states
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('active');
+            });
+        }
+    </script>
+</body>
+</html>
